@@ -13,11 +13,40 @@ npm start
 本地： http://localhost:3000/
 网络：http://192.168.0.100:3000/
 组件可以将UI切分成一些独立的、可复用的部件，这样你就只需专注于构建每一个单独的部件。
-
-英文官网：https://reactjs.org
+英文官网：https://reactjs.org/
 中文官网：https://react.docschina.org
 
-ES6定义const、let、function、
+ES6相关：
+ES5 只有两种声明变量的方法：var命令和function命令。ES6 除了添加let和const命令，另外两种声明变量的方法：import命令和class命令。所以，ES6 一共有 6 种声明变量的方法。
+var、function、let、const、import、class
+箭头函数：
+()=>this.click()
+()=>this.click() 是 ES6 中声明函数的一种方式，叫做箭头函数表达式，引入箭头函数有两个方面的作用：更简短的函数并且不绑定 this。
+var f = ([参数]) => 表达式（单一）
+// 等价于以下写法
+var f = function([参数]){
+   return 表达式;
+}
+箭头函数的基本语法如下：
+(参数1, 参数2, …, 参数N) => { 函数声明 }
+(参数1, 参数2, …, 参数N) => 表达式（单一）
+//相当于：(参数1, 参数2, …, 参数N) =>{ return 表达式; }
+// 当只有一个参数时，圆括号是可选的：
+(单一参数) => {函数声明}
+单一参数 => {函数声明}
+// 没有参数的函数应该写成一对圆括号。
+() => {函数声明}
+
+两个功能：export和import
+export：用于对外输出本模块变量的接口；
+import：用于在一个模块中加载另一个好友export接口的模块。
+一个模块用export命令定义了模块的对外接口以后，其他JS文件就可以通过import命令加载这个模块。
+
+
+
+
+
+
 
 
 
@@ -28,8 +57,7 @@ ES6定义const、let、function、
 function Welcome(props) {
   return <h1>Hello, {props.name}</h1>;
 }
-该函数是一个有效的React组件，它接收一个单一的“props”对象并返回了一个React元素。我们之所以称这种类型的组件为函数定义
-组件，是因为从字面上来看，它就是一个JavaScript函数。
+该函数是一个有效的React组件，它接收一个单一的“props”对象并返回了一个React元素。我们之所以称这种类型的组件为函数定义组件，是因为从字面上来看，它就是一个JavaScript函数。
 一般使用 ES6 class 来定义一个组件:
 class Welcome extends React.Component {
   render() {
@@ -37,95 +65,40 @@ class Welcome extends React.Component {
   }
 }
 上面两个组件在React中是相同的。
-
 注意：
 组件名称必须以大写字母开头。
 例如，<div /> 表示一个DOM标签，但 <Welcome /> 表示一个组件，并且在使用该组件时你必须定义或引入它。
-
-DOM操作
-大部分情况下你不需要通过查询 DOM 元素去更新组件的 UI，你只要关注设置组件的状态（setState）。但是可能在某些情况下你确实需要直接操作 DOM。
-首先我们要了解 ReactDOM.render 组件返回的是什么？
-它会返回对组件的引用也就是组件实例（对于无状态状态组件来说返回 null），注意 JSX 返回的不是组件实例，它只是一个 ReactElement 对象（还记得我们用纯 JS 来构建 JSX 的方式吗），比如这种：
-// A ReactElement
-const myComponent = <MyComponent />
-// render
-const myComponentInstance = ReactDOM.render(myComponent, mountNode);
-myComponentInstance.doSomething();
-findDOMNode()
-当组件加载到页面上之后（mounted），你都可以通过 react-dom 提供的 findDOMNode() 方法拿到组件对应的 DOM 元素。
-import { findDOMNode } from 'react-dom';
-// Inside Component class
-componentDidMound() {
-  const el = findDOMNode(this);
-}
-findDOMNode() 不能用在无状态组件上。
-Refs
-另外一种方式就是通过在要引用的 DOM 元素上面设置一个 ref 属性指定一个名称，然后通过 this.refs.name 来访问对应的 DOM 元素。
-比如有一种情况是必须直接操作 DOM 来实现的，你希望一个 <input/> 元素在你清空它的值时 focus，你没法仅仅靠 state 来实现这个功能。
-class App extends Component {
-  constructor() {
-    return { userInput: '' };
-  }
-  handleChange(e) {
-    this.setState({ userInput: e.target.value });
-  }
-  clearAndFocusInput() {
-    this.setState({ userInput: '' }, () => {
-      this.refs.theInput.focus();
-    });
-  }
-  render() {
-    return (
-      <div>
-        <div onClick={this.clearAndFocusInput.bind(this)}>
-          Click to Focus and Reset
-        </div>
-        <input
-          ref="theInput"
-          value={this.state.userInput}
-          onChange={this.handleChange.bind(this)}
-        />
-      </div>
-    );
-  }
-}
-如果 ref 是设置在原生 HTML 元素上，它拿到的就是 DOM 元素，如果设置在自定义组件上，它拿到的就是组件实例，这时候就需要通过 findDOMNode 来拿到组件的 DOM 元素。
-因为无状态组件没有实例，所以 ref 不能设置在无状态组件上，一般来说这没什么问题，因为无状态组件没有实例方法，不需要 ref 去拿实例调用相关的方法，但是如果想要拿无状态组件的 DOM 元素的时候，就需要用一个状态组件封装一层，然后通过 ref 和 findDOMNode 去获取。
-总结
-•	你可以使用 ref 到的组件定义的任何公共方法，比如 this.refs.myTypeahead.reset()
-•	Refs 是访问到组件内部 DOM 节点唯一可靠的方法
-•	Refs 会自动销毁对子组件的引用（当子组件删除时）
-注意事项
-•	不要在 render 或者 render 之前访问 refs
-•	不要滥用 refs，比如只是用它来按照传统的方式操作界面 UI：找到 DOM -> 更新 DOM
-
-
+将元素渲染到 DOM 中：
+首先我们在一个 HTML 页面中添加一个 id="root" 的 <div>:
+<div id="root"></div>
+在此 div 中的所有内容都将由 React DOM 来管理，所以我们将其称之为 “根” DOM 节点。
+我们用React 开发应用时一般只会定义一个根节点。但如果你是在一个已有的项目当中引入 React 的话，你可能会需要在不同的部分单独定义 React 根节点。
+要将React元素渲染到根DOM节点中，我们通过把它们都传递给 ReactDOM.render() 的方法来将其渲染到页面上：
+const element = <h1>Hello, world</h1>;
+ReactDOM.render(element, document.getElementById('root'));
 React State(状态)
 React 把组件看成是一个状态机（State Machines）。通过与用户的交互，实现不同状态，然后渲染 UI，让用户界面和数据保持一致。
 React 里，只需更新组件的 state，然后根据新的 state 重新渲染用户界面（不要操作 DOM）。
-
-React Props(属性)
-state 和 props 主要的区别在于 props 是不可变的，而 state 可以根据与用户交互来改变。这就是为什么有些容器组件需要定义 
-state 来更新和修改数据。 而子组件只能通过 props 来传递数据。
-
-React 事件处理:
+React Props（属性）
+state 和 props 主要的区别在于 props 是不可变的，而 state 可以根据与用户交互来改变。这就是为什么有些容器组件需要定义 state 来更新和修改数据。 而子组件只能通过 props 来传递数据。
+React 事件处理
 React 元素的事件处理和 DOM 元素类似。但是有一点语法上的不同:
 React 事件绑定属性的命名采用驼峰式写法，而不是小写。
 如果采用 JSX 的语法你需要传入一个函数作为事件处理函数，而不是一个字符串(DOM 元素的写法)
-
 向事件处理程序传递参数：
 通常我们会为事件处理程序传递额外的参数。例如，若是 id 是你要删除那一行的 id，以下两种方式都可以向事件处理程序传递参数：
 <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
 <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button> 上述两种方式是等价的。
 上面两个例子中，参数 e 作为 React 事件对象将会被作为第二个参数进行传递。通过箭头函数的方式，事件对象必须显式的进行传递，但是通过 bind 的方式，事件对象以及更多的参数将会被隐式的进行传递。
-
+生命周期
+生命周期图解：
+    
 组件的生命周期可分成三个状态：
 Mounting：已插入真实 DOM
 Updating：正在被重新渲染
 Unmounting：已移出真实 DOM
-
 生命周期的方法有：
-componentWillMount 在渲染前调用,在客户端也在服务端。
+componentWillMount： 在渲染前调用,在客户端也在服务端。
 componentDidMount : 在第一次渲染后调用，只在客户端。之后组件已经生成了对应的DOM结构，可以通过this.getDOMNode()来进行访问。 如果你想和其他JavaScript框架一起使用，可以在这个方法中调用setTimeout, setInterval或者发送AJAX请求等操作(防止异步操作阻塞UI)。
 componentWillReceiveProps 在组件接收到一个新的 prop (更新后)时被调用。这个方法在初始化render时不会被调用。
 shouldComponentUpdate 返回一个布尔值。在组件接收到新的props或者state时被调用。在初始化时或者使用forceUpdate时不被调用。 
@@ -133,12 +106,23 @@ shouldComponentUpdate 返回一个布尔值。在组件接收到新的props或�
 componentWillUpdate在组件接收到新的props或者state但还没有render时被调用。在初始化时不会被调用。
 componentDidUpdate 在组件完成更新后立即调用。在初始化时不会被调用。
 componentWillUnmount在组件从 DOM 中移除之前立刻被调用。
+在创建组件的实例并将其插入DOM时，将按以下顺序调用这些方法：
+	constructor()
+	static getDerivedStateFromProps()
+	render()
+	componentDidMount()
+注意：
+这些方法被认为是遗留的，您应该在新代码中避免它们：UNSAFE_componentWillMount()
+属性或状态的更改可能导致更新。重新呈现组件时，将按以下顺序调用这些方法：
+	static getDerivedStateFromProps()
+	shouldComponentUpdate()
+	render()
+	getSnapshotBeforeUpdate()
+	componentDidUpdate()
+这些方法被认为是遗留的，您应该在新代码中避免它们：
+UNSAFE_componentWillUpdate()
+UNSAFE_componentWillReceiveProps()
+卸载，从DOM中删除组件时调用此方法：
+componentWillUnmount()
+英文版：组件声明周期图：http://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/
  
-
-组件可以引用其输出中的其他组件。这使我们可以对任何细节级别使用相同的组件抽象。
-按钮，表单，对话框，屏幕：在React应用程序中，所有这些通常表示为组件。
-
-生命周期
-事件处理
-DOM操作
-
